@@ -4,7 +4,7 @@ from PySide6.QtCore import QThread, Signal
 
 
 class NetSpeed(QThread):
-    netspeed_signal = Signal(str)
+    data_signal = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -25,7 +25,7 @@ class NetSpeed(QThread):
             sent_before = sent_now
             recv_before = recv_now
 
-            self.netspeed_signal.emit(f"{sent} ↑\n{recv} ↓")
+            self.data_signal.emit(f"{sent} ↑\n{recv} ↓")
             # print(f"{sent} ↑\n{recv} ↓")
 
     @staticmethod

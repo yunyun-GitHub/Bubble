@@ -10,7 +10,7 @@ from OpenHardwareMonitor.Hardware import *
 
 
 class CPUTemp(QThread):
-    cputemp_signal = Signal(str)
+    data_signal = Signal(str)
 
     def __init__(self):
         super().__init__()
@@ -29,7 +29,7 @@ class CPUTemp(QThread):
                         if sensor.SensorType == SensorType.Temperature:
                             cputemp_list.append([sensor.Name, sensor.Value])
             cputemp = self.conversion(cputemp_list)
-            self.cputemp_signal.emit(cputemp)
+            self.data_signal.emit(cputemp)
             time.sleep(1)  # 暂停1秒
             # print(cputemp)
 

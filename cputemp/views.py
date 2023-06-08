@@ -1,47 +1,14 @@
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QGuiApplication
-from PySide6.QtWidgets import QApplication, QLabel
+from PySide6.QtWidgets import QApplication
 
-from common.widgets import BaseWidget
+from common.widgets import BWidget
 from cputemp.data import CPUTemp
 
 
-class CPUTempWidget(BaseWidget):
+class CPUTempWidget(BWidget):
     def __init__(self):
-        super().__init__()
-
-        # 背景图片 文字颜色和大小的樣式(qss)
-        self.style_sheet = u".QWidget .QLabel {color: #FFFFFF; font-size: 13px;}"
-        self.widget.setStyleSheet(self.style_sheet)  # 设置样式
-
-        self.size = [180, 166]  # 窗口大小
-        self.label_pos = [80, 35]  # 文字位置
-        self.position = [0, 0]  # 窗口位置
-
-        # 创建窗口
-        self.resize(self.size[0], self.size[1])  # 设置窗口大小
-        screen = QGuiApplication.primaryScreen().size()  # 获得屏幕的尺寸
-        self.move(screen.width() - self.position[0] - self.size[0],
-                  screen.height() - self.position[1] - self.size[1])  # 调用move移动到右下角位置
-
-        self.label = QLabel("", self.widget)  # 创建文字
-        self.label.setAlignment(Qt.AlignRight)  # 右对齐
-
-        # 启动子线程
-        self.cputemp_thread = CPUTemp()
-        self.cputemp_thread.cputemp_signal.connect(self.update_cputemp)
-        self.cputemp_thread.start()
-
-    def update_cputemp(self, cputemp):
-        """更新系统信息,以右上角为锚点，设置位置，以及内容"""
-
-        self.label.setText(cputemp)
-        self.label.adjustSize()  # QLabel自适应内容大小
-        self.label.move(self.size[0] - self.label_pos[0] - self.label.width() - 20,
-                        self.size[1] - self.label_pos[1] - self.label.height() - 20)
-
-    def closeEvent(self, event):
-        self.cputemp_thread.stop()
+        super().__init__(CPUTemp)
+        self.label_pos = [90, 35]  # 文字位置
+        self.data_thread.data_signal.connect(self.update_label)
 
 
 if __name__ == "__main__":

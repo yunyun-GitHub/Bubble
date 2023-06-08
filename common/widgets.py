@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QCursor
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout
+from PySide6.QtGui import QCursor, QGuiApplication
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel
 
 
 class BaseWidget(QWidget):
@@ -28,9 +28,38 @@ class BaseWidget(QWidget):
         self.move(QCursor.pos() - self.relative_position)
 
 
-if __name__ == '__main__':
-    app = QApplication([])
-    app.setQuitOnLastWindowClosed(False)  # 防止程序在關閉最後一個窗口時退出
-    window = BaseWidget()
-    window.show()
-    app.exec()
+class BWidget(BaseWidget):
+    def __init__(self, DataThread):
+        super().__init__()
+
+        # 背景图片 文字颜色和大小的樣式(qss)
+        self.style_sheet = u".QWidget .QLabel {color: #FFFFFF; font-size: 13px;}"
+        self.widget.setStyleSheet(self.style_sheet)  # 设置样式
+
+        self.size = [180, 166]  # 窗口大小
+        self.label_pos = [10, 35]  # 文字位置
+        self.position = [0, 0]  # 窗口位置
+
+        # 创建窗口
+        self.resize(self.size[0], self.size[1])  # 设置窗口大小
+        screen = QGuiApplication.primaryScreen().size()  # 获得屏幕的尺寸
+        self.move(screen.width() - self.position[0] - self.size[0],
+                  screen.height() - self.position[1] - self.size[1])  # 调用move移动到右下角位置
+
+        self.label = QLabel("", self.widget)  # 创建文字
+        self.label.setAlignment(Qt.AlignRight)  # 右对齐
+
+        # 启动子线程
+        self.data_thread = DataThread()
+        self.data_thread.start()
+
+    def update_label(self, data):
+        """更新系统信息,以右上角为锚点，设置位置，以及内容"""
+
+        self.label.setText(data)
+        self.label.adjustSize()  # QLabel自适应内容大小
+        self.label.move(self.size[0] - self.label_pos[0] - self.label.width() - 20,
+                        self.size[1] - self.label_pos[1] - self.label.height() - 20)
+
+    def closeEvent(self, event):
+        self.data_thread.stop()
