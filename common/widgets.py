@@ -7,7 +7,7 @@ class BaseWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.relative_position = QCursor.pos() - self.pos()  # 相對位置
-        self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.SubWindow)  # 置顶窗口,无边框,隐藏任务栏图标
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.SubWindow)  # 置顶窗口,无边框,隐藏任务栏图标
         self.setAttribute(Qt.WA_TranslucentBackground)  # 使透明效果生效
 
         # QWidget不是顶层窗口，必须再套一层
